@@ -1,0 +1,94 @@
+﻿@page "/"
+@using ViewModels;
+
+<MudPaper Class="pa-4">
+    <MudText Typo="Typo.h5" Class="mb-4">Fixtures</MudText>
+
+    <MudGrid GutterSize="3">
+        @if (_fixtureCardViewModels is null || !_fixtureCardViewModels.Any())
+        {
+            <MudItem xs="12">
+                <MudAlert Severity="Severity.Info">
+                    No fixtures to display.
+                </MudAlert>
+            </MudItem>
+        }
+        else
+        {
+            @foreach(var vm in PagedFixtures)
+            {
+                <MudItem xs="12" sm="6" md="4">
+                    <MudCard Class="mb-3" Style="cursor: pointer" Elevation="1" onclick="@(() => NavigateToPredictions(vm.FixtureId))">
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.subtitle2">
+                                    @vm.Date.ToString("dd.MM.yyyy HH:mm")
+                                </MudText>
+                                <MudText Typo="Typo.caption" Class="text-secondary">
+                                    Fixture ID: @vm.FixtureId
+                                </MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+
+                        <MudCardContent>
+                            <MudGrid AlignItems="Center">
+                                <MudItem xs="5">
+                                    <MudStack Direction="Row" AlignItems="AlignItems.Center" Spacing="1">
+                                        @if (!string.IsNullOrWhiteSpace(vm.HomeLogo))
+                                        {
+                                            <MudAvatar Size="Size.Medium">
+                                                <MudImage Src="@vm.HomeLogo" />
+                                            </MudAvatar>
+                                        }
+                                        <MudText Typo="Typo.subtitle1"
+                                                 Class="@GetTeamClass(vm, true)">
+                                            @vm.HomeName
+                                        </MudText>
+                                    </MudStack>
+                                </MudItem>
+
+                                <MudItem xs="2" Class="d-flex justify-center">
+                                    <MudText Typo="Typo.subtitle2">vs</MudText>
+                                </MudItem>
+
+                                <MudItem xs="5">
+                                    <MudStack Direction="Row" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="1">
+                                        @if (!string.IsNullOrWhiteSpace(vm.AwayLogo))
+                                        {
+                                            <MudAvatar Size="Size.Medium">
+                                                <MudImage Src="@vm.AwayLogo" />
+                                            </MudAvatar>
+                                        }
+                                        <MudText Typo="Typo.subtitle1"
+                                                 Class="@GetTeamClass(vm, false)">
+                                            @vm.AwayName
+                                        </MudText>
+                                    </MudStack>
+                                </MudItem>
+                            </MudGrid>
+                        </MudCardContent>
+
+                        <MudCardActions Class="d-flex justify-space-between align-center px-4 pb-2">
+                            <MudText Typo="Typo.subtitle2">
+                                @GetScoreText(vm)
+                            </MudText>
+
+                            <MudChip Color="@GetStatusColor(vm)" Variant="Variant.Filled" Size="Size.Small" T="FixtureCardViewModel">
+                                @GetStatusText(vm)
+                            </MudChip>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        }
+    </MudGrid>
+    @if (_fixtureCardViewModels is not null && _fixtureCardViewModels.Count() > _pageSize)
+    {
+        <MudStack Class="mt-4" Justify="Justify.Center" AlignItems="AlignItems.Center">
+            <MudPagination Page="@_page"
+                           SelectedChanged="OnPageChanged"
+                           Count="TotalPages"
+                           BoundaryCount="1" />
+        </MudStack>
+    }
+</MudPaper>

@@ -1,0 +1,109 @@
+﻿@using ViewModels;
+
+@page "/predictions/{FixtureId:int}"
+
+@if (_fixtureCardViewModel is not null)
+{
+     <MudCard Class="mb-4">
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">
+                        @_fixtureCardViewModel.HomeName vs @_fixtureCardViewModel.AwayName
+                    </MudText>
+                    <MudText Typo="Typo.caption" Class="text-secondary">
+                        @_fixtureCardViewModel.Date.ToString("dd.MM.yyyy HH:mm")
+                    </MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+
+            <MudCardContent>
+                <MudGrid AlignItems="Center">
+                    <MudItem xs="5">
+                        <MudStack Direction="Row" AlignItems="AlignItems.Center" Spacing="1">
+                            @if (!string.IsNullOrWhiteSpace(_fixtureCardViewModel.HomeLogo))
+                            {
+                                <MudAvatar Size="Size.Medium">
+                                    <MudImage Src="@_fixtureCardViewModel.HomeLogo" />
+                                </MudAvatar>
+                            }
+                            <MudText Typo="Typo.subtitle1"
+                                     Class="@GetTeamClass(_fixtureCardViewModel, true)">
+                                @_fixtureCardViewModel.HomeName
+                            </MudText>
+                        </MudStack>
+                    </MudItem>
+
+                    <MudItem xs="2" Class="d-flex justify-center">
+                        <MudText Typo="Typo.subtitle1">
+                            @GetScoreText(_fixtureCardViewModel)
+                        </MudText>
+                    </MudItem>
+
+                    <MudItem xs="5">
+                        <MudStack Direction="Row" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="1">
+                            @if (!string.IsNullOrWhiteSpace(_fixtureCardViewModel.AwayLogo))
+                            {
+                                <MudAvatar Size="Size.Medium">
+                                    <MudImage Src="@_fixtureCardViewModel.AwayLogo" />
+                                </MudAvatar>
+                            }
+                            <MudText Typo="Typo.subtitle1"
+                                     Class="@GetTeamClass(_fixtureCardViewModel, false)">
+                                @_fixtureCardViewModel.AwayName
+                            </MudText>
+                        </MudStack>
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+        </MudCard>
+}
+
+@if (_fixturePredictionsViewModels is not null)
+{
+        <MudTable Items="_fixturePredictionsViewModels" Dense="true" T="FixturePredictionsViewModel" RowStyleFunc="@((vm, idx) => GetRowStyle(vm))">
+            <HeaderContent>
+                <MudTh>Pick</MudTh>
+                <MudTh>Odds</MudTh>
+                <MudTh>Prob. [%]</MudTh>
+                <MudTh>EV</MudTh>
+                <MudTh>Kelly</MudTh>
+                <MudTh>Rec. Kelly</MudTh>
+                <MudTh>Confidence</MudTh>
+                <MudTh>Explanation</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                    <MudTd DataLabel="Pick">@context.PickedBet</MudTd>
+                    <MudTd DataLabel="Odds">@context.Odds</MudTd>
+                    <MudTd DataLabel="Prob.">@DisplayDecimal(context.Probability * 100m) %</MudTd>
+                    <MudTd DataLabel="EV">@DisplayDecimal(context.EV)</MudTd>
+                    <MudTd DataLabel="Kelly">@DisplayDecimal(context.Kelly * 100m)</MudTd>
+                    <MudTd DataLabel="Rec. Kelly">
+                        @if (context.RecommendedKelly.HasValue)
+                        {
+                            @DisplayDecimal(context.RecommendedKelly.Value * 100m)
+                        }
+                        else
+                        {
+                            <span>-</span>
+                        }
+                    </MudTd>
+                    <MudTd DataLabel="Confidence">
+                        @if (context.Confidence.HasValue)
+                        {
+                            @($"{DisplayDecimal(context.Confidence.Value * 100m)} %")
+                        }
+                        else
+                        {
+                            <span>-</span>
+                        }
+                    </MudTd>
+                    <MudTd DataLabel="Explanation">
+                        <MudTooltip Text="@context.Explanation">
+                            <MudText Typo="Typo.body2" Class="mud-truncate" Style="max-width: 250px;">
+                                @context.Explanation
+                            </MudText>
+                        </MudTooltip>
+                    </MudTd>
+            </RowTemplate>
+     </MudTable>
+}
