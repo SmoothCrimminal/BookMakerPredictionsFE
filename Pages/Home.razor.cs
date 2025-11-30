@@ -11,18 +11,23 @@ namespace BookMakerPredictionsFE.Pages
         [Inject] FixtureService FixtureService { get; set; } = null!;
         [Inject] NavigationManager NavigationManager { get; set; } = null!;
 
+        [Parameter]
+        [SupplyParameterFromQuery]
+        public int Page { get; set; }
+
+        [Parameter]
+        [SupplyParameterFromQuery]
+        public int PageSize { get; set; }
+
         private int TotalPages => _fixtureCardViewModels is null || _fixtureCardViewModels.Count() == 0
           ? 1
-          : (int)Math.Ceiling(_fixtureCardViewModels.Count() / (double)_pageSize);
+          : (int)Math.Ceiling(_fixtureCardViewModels.Count() / (double)PageSize);
         private IEnumerable<FixtureCardViewModel> PagedFixtures => _fixtureCardViewModels is null
            ? Enumerable.Empty<FixtureCardViewModel>()
            : _fixtureCardViewModels
-               .Skip((_page - 1) * _pageSize)
-               .Take(_pageSize);
+               .Skip((Page - 1) * PageSize)
+               .Take(PageSize);
 
-        private bool _loading;
-        private int _page = 1;
-        private int _pageSize = 9;
         private IEnumerable<FixtureCardViewModel>? _fixtureCardViewModels;
 
         protected override async Task OnInitializedAsync()
@@ -32,8 +37,6 @@ namespace BookMakerPredictionsFE.Pages
 
         private async Task InitializeView()
         {
-            _loading = true;
-
             var fixtureWithPredictions = await FixtureService.GetFixturesWithPredictionsAsync();
 
             _fixtureCardViewModels = fixtureWithPredictions
@@ -54,12 +57,16 @@ namespace BookMakerPredictionsFE.Pages
                 ResultRaw = f.FixtureResult?.Result
             });
 
-            _loading = false;
+            if (Page == 0 && PageSize == 0)
+            {
+                Page = 1;
+                PageSize = 9;
+            }
         }
 
         private void OnPageChanged(int page)
         {
-            _page = page;
+            NavigationManager.NavigateTo($"/?page={page}&pageSize={PageSize}");
         }
 
         private string GetTeamName(string? teamName)

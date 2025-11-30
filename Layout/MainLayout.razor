@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using BookMakerPredictionsFE.Components
+@inherits LayoutComponentBase
 
 @* Required *@
 <MudThemeProvider />
@@ -10,4 +11,29 @@
 @* Needed for snackbars *@
 <MudSnackbarProvider />
 
-@Body
+<MudLayout>
+    <MudDrawer @bind-Open="_drawerOpen"
+               Variant="DrawerVariant.Responsive"
+               Elevation="1"
+               Anchor="Anchor.Start"
+               Class="pa-2"
+               ClipMode="DrawerClipMode.Never">
+
+        <Navigation OnItemClick="HandleNavItemClick" />
+    </MudDrawer>
+
+    <MudMainContent>
+        <MudAppBar Elevation="1" Color="Color.Primary">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                           Color="Color.Inherit"
+                           Edge="Edge.Start"
+                           OnClick="@ToggleDrawer"
+                           Class="me-2" />
+        </MudAppBar>
+
+        <MudContainer MaxWidth="MaxWidth.False" Class="mt-4 px-4 pb-4">
+            @Body
+        </MudContainer>
+
+    </MudMainContent>
+</MudLayout>

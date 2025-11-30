@@ -1,0 +1,21 @@
+﻿@page "/stats"
+
+<MudPaper Class="pa-4" Elevation="2">
+    <MudText Typo="Typo.h5" Style="padding: 12px">AI Agent Stats</MudText>
+
+    <MudTable Items="@_agentStatsVM">
+        <HeaderContent>
+            <MudTh>League</MudTh>
+            <MudTh>Country</MudTh>
+            <MudTh>Prediction %</MudTh>
+        </HeaderContent>
+
+        <RowTemplate>
+            <MudTd>@context.LeagueName</MudTd>
+            <MudTd>@context.LeagueCountry</MudTd>
+            <MudTd>
+                <span class="ml-2">@($"{context.GoodPredictionsPercentage:0.0}%")</span>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudPaper>

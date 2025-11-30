@@ -82,10 +82,10 @@
             }
         }
     </MudGrid>
-    @if (_fixtureCardViewModels is not null && _fixtureCardViewModels.Count() > _pageSize)
+    @if (_fixtureCardViewModels is not null && _fixtureCardViewModels.Count() > PageSize)
     {
         <MudStack Class="mt-4" Justify="Justify.Center" AlignItems="AlignItems.Center">
-            <MudPagination Page="@_page"
+            <MudPagination Selected="@Page"
                            SelectedChanged="OnPageChanged"
                            Count="TotalPages"
                            BoundaryCount="1" />

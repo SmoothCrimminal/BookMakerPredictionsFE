@@ -1,4 +1,5 @@
 using BookMakerPredictionsFE;
+using BookMakerPredictionsFE.Constants;
 using BookMakerPredictionsFE.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -9,8 +10,12 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddMudServices();
-builder.Services.AddHttpClient(nameof(FixtureService), sp => sp.BaseAddress = new Uri("http://192.168.0.21:5000"));
+builder.Services.AddHttpClient(HttpClientConstants.BookMakerApi, sp => sp.BaseAddress = new Uri("http://192.168.0.21:5000"));
+
 builder.Services.AddSingleton<FixtureService>();
+builder.Services.AddSingleton<LeagueService>();
+builder.Services.AddSingleton<AgentStatsService>();
+
 builder.Services.AddDistributedMemoryCache();
 
 await builder.Build().RunAsync();
